@@ -211,7 +211,7 @@
 <div class="overlay" id="detailOverlay">
   <div class="detail">
     <button class="close-btn no-print" onclick="closeDetail()">×</button>
-    <div class="detail-art" id="detailArt"><img id="detailImg" alt=""></div>
+    <div class="detail-art" id="detailArt"><img id="detailImg" alt="" referrerpolicy="no-referrer" crossorigin="anonymous"></div>
     <div class="detail-info">
       <div class="plate-num" id="detailNum"></div>
       <h2 id="detailTitle"></h2>
@@ -817,7 +817,7 @@ function renderGallery(){
     frame.innerHTML = `
       <div class="frame-inner">
         <div class="art-wrap" data-title="${art.title}">
-          <img src="${imgUrl(art.file, 480)}" alt="${art.title}" loading="lazy">
+          <img src="${imgUrl(art.file, 480)}" alt="${art.title}" loading="lazy" referrerpolicy="no-referrer" crossorigin="anonymous">
         </div>
       </div>
       <div class="plate">
