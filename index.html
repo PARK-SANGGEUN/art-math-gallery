@@ -211,7 +211,7 @@
 <div class="overlay" id="detailOverlay">
   <div class="detail">
     <button class="close-btn no-print" onclick="closeDetail()">×</button>
-    <div class="detail-art" id="detailArt"><img id="detailImg" alt="" referrerpolicy="no-referrer" crossorigin="anonymous"></div>
+    <div class="detail-art" id="detailArt"><img id="detailImg" alt="" referrerpolicy="no-referrer"></div>
     <div class="detail-info">
       <div class="plate-num" id="detailNum"></div>
       <h2 id="detailTitle"></h2>
@@ -772,10 +772,8 @@ function md5(string){
 }
 function commonsThumb(file, width){
   var fn = file.replace(/ /g, "_");
-  var hash = md5(fn);
-  var d1 = hash.charAt(0), d2 = hash.substring(0,2);
   var enc = encodeURIComponent(fn);
-  return "https://upload.wikimedia.org/wikipedia/commons/thumb/" + d1 + "/" + d2 + "/" + enc + "/" + width + "px-" + enc;
+  return "https://commons.wikimedia.org/wiki/Special:FilePath/" + enc + "?width=" + width;
 }
 function imgUrl(file, width){ return commonsThumb(file, width || 600); }
 
@@ -817,7 +815,7 @@ function renderGallery(){
     frame.innerHTML = `
       <div class="frame-inner">
         <div class="art-wrap" data-title="${art.title}">
-          <img src="${imgUrl(art.file, 480)}" alt="${art.title}" loading="lazy" referrerpolicy="no-referrer" crossorigin="anonymous">
+          <img src="${imgUrl(art.file, 480)}" alt="${art.title}" loading="lazy" referrerpolicy="no-referrer">
         </div>
       </div>
       <div class="plate">
