@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모두의 명화로 떠나는 탐구</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Noto+Serif+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --wall:#16261f;
+    --wall-2:#1f352c;
+    --wall-3:#0c1612;
+    --accent:#d98b56;
+    --accent-soft:#b9764a;
+    --accent-bright:#f4cb9c;
+    --cream:#f4ecdc;
+    --ink:#241f1a;
+    --ink-soft:#6b5f53;
+    --easy:#9ab98a;
+    --mid:#e0b35f;
+    --hard:#cf7059;
+    --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Noto Serif KR', serif;
+    background:
+      radial-gradient(ellipse at top, rgba(255,255,255,0.05), transparent 60%),
+      linear-gradient(180deg, var(--wall) 0%, var(--wall-2) 45%, var(--wall-3) 100%);
+    color:var(--accent-bright);
+    min-height:100vh;
+    position:relative;
+    overflow-x:hidden;
+  }
+  .spotlight{
+    position:fixed; width:60vmax; height:60vmax; left:-15vmax; top:-15vmax;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(244,203,156,0.14), rgba(244,203,156,0.0) 60%);
+    filter:blur(6px); pointer-events:none; z-index:1; mix-blend-mode:screen;
+    animation:driftSpot 32s ease-in-out infinite alternate;
+    transition:transform .6s ease-out;
+  }
+  @keyframes driftSpot{
+    0%{ transform:translate(0vmax,0vmax); }
+    50%{ transform:translate(55vmax,35vmax); }
+    100%{ transform:translate(15vmax,60vmax); }
+  }
+  .top-actions{
+    position:fixed; top:14px; right:14px; z-index:60;
+    display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;
+    max-width:calc(100vw - 28px);
+  }
+  .top-btn{
+    font-family:'Cormorant Garamond', serif; font-style:italic; letter-spacing:0.1em; font-size:13px;
+    color:var(--wall); background:var(--accent); border:1px solid var(--accent-bright);
+    border-radius:99px; padding:9px 16px; cursor:pointer;
+    box-shadow:0 6px 18px -6px rgba(0,0,0,0.6);
+    transition:transform .25s var(--ease), background .25s var(--ease);
+    white-space:nowrap;
+  }
+  .top-btn:hover{ transform:translateY(-1px); background:var(--accent-bright); }
+  .top-btn.ghost{ background:transparent; color:var(--accent-bright); }
+  .top-btn.ghost:hover{ background:rgba(217,139,86,0.16); }
+  .gallery-header{ position:relative; z-index:2; text-align:center; padding:64px 24px 36px; border-bottom:1px solid rgba(217,139,86,0.22); }
+  .eyebrow{ font-family:'Cormorant Garamond', serif; font-style:italic; letter-spacing:0.35em; font-size:12px; color:var(--accent-soft); margin-bottom:14px; text-transform:uppercase; }
+  .gallery-header h1{ font-size:clamp(28px,5vw,46px); margin:0 0 10px; font-weight:600; letter-spacing:0.04em; color:var(--cream); }
+  .credit-line{
+    font-family:'Caveat', cursive; font-weight:700; font-size:clamp(20px,3.4vw,28px); letter-spacing:0.04em; margin:2px 0 18px; display:inline-block;
+    background:linear-gradient(100deg, var(--accent-soft) 0%, var(--accent-bright) 25%, #fff4e0 50%, var(--accent-bright) 75%, var(--accent-soft) 100%);
+    background-size:250% auto; -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:shine 4.5s linear infinite, write-in 1.4s var(--ease) both;
+  }
+  @keyframes shine{ to{ background-position:-250% center; } }
+  @keyframes write-in{ from{ opacity:0; letter-spacing:0.4em; filter:blur(2px); } to{ opacity:1; letter-spacing:0.04em; filter:blur(0); } }
+  .gallery-header .sub{ font-family:'Cormorant Garamond', serif; font-size:18px; font-style:italic; color:var(--accent); max-width:600px; margin:0 auto; line-height:1.7; }
+  .legend{ position:relative; z-index:2; display:flex; flex-wrap:wrap; gap:10px; justify-content:center; padding:22px clamp(20px,5vw,64px) 0; max-width:1100px; margin:0 auto; }
+  .legend-item{ font-family:'Cormorant Garamond', serif; font-size:12.5px; letter-spacing:0.06em; color:var(--cream); border:1px solid currentColor; border-radius:99px; padding:4px 12px; opacity:.85; }
+  .gallery{ position:relative; z-index:2; display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:36px; padding:40px clamp(20px,5vw,64px) 80px; max-width:1320px; margin:0 auto; }
+  .frame{ cursor:pointer; opacity:0; transform:translateY(14px); animation:rise .7s var(--ease) forwards; }
+  .frame-inner{
+    background:#0e1a16; border:1px solid rgba(217,139,86,0.32);
+    box-shadow:0 0 0 1px rgba(0,0,0,0.4), 0 0 0 6px var(--wall-2), 0 0 0 7px rgba(217,139,86,0.45), 0 18px 40px -16px rgba(0,0,0,0.7);
+    padding:10px; transition:box-shadow .35s var(--ease), transform .35s var(--ease);
+  }
+  .frame:hover .frame-inner{
+    transform:translateY(-4px) scale(1.015);
+    box-shadow:0 0 0 1px rgba(0,0,0,0.4), 0 0 0 6px var(--wall-2), 0 0 0 7px rgba(244,203,156,0.8), 0 24px 50px -16px rgba(0,0,0,0.8);
+  }
+  .frame-inner .art-wrap{ position:relative; width:100%; padding-top:100%; overflow:hidden; background:#0f1c17; }
+  .frame-inner img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:saturate(0.97) contrast(1.02); transition:transform .6s var(--ease); }
+  .frame:hover .frame-inner img{ transform:scale(1.05); }
+  .img-fallback .art-wrap{ display:flex; align-items:center; justify-content:center; background:repeating-linear-gradient(135deg, rgba(217,139,86,0.08) 0 2px, transparent 2px 18px), linear-gradient(160deg, #20342b, #0f1c17); }
+  .img-fallback .art-wrap::after{ content:attr(data-title); font-family:'Cormorant Garamond', serif; font-style:italic; font-size:15px; color:var(--accent); text-align:center; padding:0 16px; line-height:1.6; }
+  .img-fallback img{display:none;}
+  .plate{ margin-top:12px; text-align:center; padding:6px 4px 2px; }
+  .plate .plate-num{ display:block; font-family:'Cormorant Garamond', serif; font-size:11px; letter-spacing:0.3em; color:var(--accent-soft); margin-bottom:6px; }
+  .plate h3{ margin:0 0 4px; font-size:16px; font-weight:600; color:var(--cream); }
+  .plate p{ margin:0 0 10px; font-family:'Cormorant Garamond', serif; font-style:italic; font-size:13px; color:var(--accent-soft); }
+  .badges{ display:flex; flex-wrap:wrap; gap:5px; justify-content:center; }
+  .badge{ font-family:'Cormorant Garamond', serif; font-size:10.5px; letter-spacing:0.1em; padding:2px 8px; border-radius:99px; border:1px solid currentColor; white-space:nowrap; }
+  @keyframes rise{ to{ opacity:1; transform:translateY(0); } }
+  .overlay{ position:fixed; inset:0; background:rgba(8,12,10,0.88); backdrop-filter:blur(3px); display:none; align-items:center; justify-content:center; padding:24px; z-index:50; }
+  .overlay.open{display:flex;}
+  .detail{ background:var(--wall-2); border:1px solid rgba(217,139,86,0.3); max-width:1020px; width:100%; max-height:92vh; overflow-y:auto; display:grid; grid-template-columns:1fr; border-radius:2px; position:relative; box-shadow:0 30px 80px -20px rgba(0,0,0,0.8); }
+  @media(min-width:840px){ .detail{ grid-template-columns: 1.05fr 1fr; } }
+  .detail-art{ position:relative; background:radial-gradient(circle at 50% 35%, rgba(244,203,156,0.10), transparent 60%), #0a1310; display:flex; align-items:center; justify-content:center; padding:36px; min-height:280px; }
+  .detail-art img{ max-width:100%; max-height:60vh; object-fit:contain; box-shadow:0 20px 50px -10px rgba(0,0,0,0.7); animation:zoomIn .6s var(--ease) both; }
+  @keyframes zoomIn{ from{ opacity:0; transform:scale(.96); } to{ opacity:1; transform:scale(1); } }
+  .detail-art.img-fallback::after{ content:attr(data-title); font-family:'Cormorant Garamond', serif; font-style:italic; font-size:22px; color:var(--accent); text-align:center; max-width:60%; line-height:1.7; }
+  .detail-art.img-fallback img{display:none;}
+  .detail-info{ padding:36px 36px 40px; }
+  .detail-info .plate-num{ font-family:'Cormorant Garamond', serif; letter-spacing:0.35em; font-size:11px; color:var(--accent-soft); }
+  .detail-info h2{ font-size:26px; margin:8px 0 4px; color:var(--cream); font-weight:600; }
+  .detail-info .artist-line{ font-family:'Cormorant Garamond', serif; font-style:italic; color:var(--accent); font-size:15px; margin-bottom:18px; }
+  .detail-info .desc{ font-size:14px; line-height:1.85; color:#dcc9ac; margin-bottom:28px; padding-bottom:24px; border-bottom:1px solid rgba(217,139,86,0.18); }
+  .docents{ display:flex; flex-direction:column; gap:18px; }
+  .docent{ border:1px solid rgba(217,139,86,0.22); background:rgba(255,255,255,0.015); padding:18px 18px 16px; position:relative; }
+  .docent::before{ content:attr(data-roman); position:absolute; top:-13px; left:14px; background:var(--wall-2); padding:0 8px; font-family:'Cormorant Garamond', serif; font-size:13px; letter-spacing:0.2em; color:var(--accent); }
+  .docent-head{ display:flex; gap:8px; align-items:center; margin-bottom:10px; flex-wrap:wrap; }
+  .tag{ font-family:'Cormorant Garamond', serif; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; padding:3px 9px; border:1px solid currentColor; border-radius:99px; }
+  .tag.level-easy{ color:var(--easy); }
+  .tag.level-mid{ color:var(--mid); }
+  .tag.level-hard{ color:var(--hard); }
+  .tag.subject{ color:var(--accent-soft); border-color:rgba(217,139,86,0.4); }
+  .docent-q{ margin:0 0 14px; font-size:15px; line-height:1.8; color:var(--cream); }
+  .curriculum{ margin:0 0 14px; padding:10px 12px; border:1px dashed rgba(217,139,86,0.3); border-radius:2px; font-family:'Cormorant Garamond', serif; font-size:12.5px; line-height:1.7; color:#d6c4a3; }
+  .curriculum .curr-row{ display:block; }
+  .curriculum .curr-year{ font-style:italic; color:var(--accent-soft); margin-right:6px; }
+  .start-btn{ font-family:'Noto Serif KR', serif; background:transparent; border:1px solid var(--accent); color:var(--accent-bright); padding:8px 18px; font-size:13px; letter-spacing:0.06em; cursor:pointer; transition:background .25s var(--ease), color .25s var(--ease); }
+  .start-btn:hover{ background:var(--accent); color:#16261f; }
+  .close-btn{ position:absolute; top:14px; right:16px; background:none; border:none; color:var(--accent-bright); font-size:26px; line-height:1; cursor:pointer; z-index:5; width:36px; height:36px; }
+  .worksheet{ background:var(--cream); color:var(--ink); max-width:760px; width:100%; max-height:92vh; overflow-y:auto; padding:48px clamp(24px,5vw,64px); position:relative; box-shadow:0 30px 80px -20px rgba(0,0,0,0.8); }
+  .worksheet .close-btn{ color:var(--ink); }
+  .ws-eyebrow{ font-family:'Cormorant Garamond', serif; font-style:italic; letter-spacing:0.35em; font-size:12px; color:var(--accent-soft); text-transform:uppercase; margin-bottom:8px; }
+  .worksheet h2{ font-size:24px; margin:0 0 22px; border-bottom:2px solid var(--ink); padding-bottom:14px; }
+  .ws-field{ margin-bottom:18px; }
+  .ws-field label{ display:block; font-size:13px; color:var(--ink-soft); margin-bottom:6px; letter-spacing:0.02em; }
+  .ws-field .static{ font-size:15px; font-weight:600; padding:8px 0; border-bottom:1px solid rgba(36,31,26,0.25); line-height:1.6; }
+  .ws-field .static.small{ font-size:13px; font-weight:400; font-family:'Cormorant Garamond', serif; color:var(--ink-soft); border-bottom:none; padding-top:2px; }
+  .ws-field input, .ws-field textarea{ width:100%; font-family:'Noto Serif KR', serif; font-size:14px; line-height:1.7; color:var(--ink); background:rgba(255,255,255,0.5); border:1px solid rgba(36,31,26,0.25); border-radius:2px; padding:10px 12px; resize:vertical; }
+  .ws-field input{ height:40px; }
+  .ws-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media(max-width:520px){ .ws-grid{ grid-template-columns:1fr; } }
+  .ws-actions{ margin-top:28px; display:flex; gap:12px; flex-wrap:wrap; }
+  .ws-btn{ font-family:'Noto Serif KR', serif; border:1px solid var(--ink); background:var(--ink); color:var(--cream); padding:11px 22px; font-size:14px; cursor:pointer; transition:opacity .2s; }
+  .ws-btn.secondary{ background:transparent; color:var(--ink); }
+  .ws-btn.accent{ background:var(--accent-soft); border-color:var(--accent-soft); color:#241f1a; }
+  .ws-btn:hover{ opacity:0.78; }
+  .ws-hint{ margin-top:10px; font-family:'Cormorant Garamond', serif; font-style:italic; font-size:12.5px; color:var(--ink-soft); }
+  .guide{ background:var(--cream); color:var(--ink); max-width:680px; width:100%; max-height:88vh; overflow-y:auto; padding:44px clamp(24px,5vw,56px); position:relative; box-shadow:0 30px 80px -20px rgba(0,0,0,0.8); }
+  .guide .close-btn{ color:var(--ink); }
+  .guide h2{ font-size:24px; margin:0 0 6px; font-weight:600; }
+  .guide .guide-sub{ font-family:'Cormorant Garamond', serif; font-style:italic; color:var(--accent-soft); margin-bottom:22px; font-size:14px; }
+  .guide h3{ font-size:15px; margin:26px 0 8px; padding-bottom:6px; border-bottom:1px solid rgba(36,31,26,0.2); }
+  .guide p, .guide li{ font-size:13.5px; line-height:1.85; color:#4a3f37; }
+  .guide ol, .guide ul{ padding-left:20px; margin:8px 0; }
+  .guide .note{ margin-top:30px; padding:14px 16px; border-left:3px solid var(--accent-soft); background:rgba(217,139,86,0.08); font-size:13px; line-height:1.8; color:#5a4c40; }
+  .present-overlay{ position:fixed; inset:0; z-index:80; display:none; background:var(--wall-3); color:var(--cream); }
+  .present-overlay.open{ display:flex; flex-direction:column; }
+  .present-bg{ position:absolute; inset:0; background-size:cover; background-position:center; filter:blur(18px) brightness(.45) saturate(.9); transform:scale(1.08); transition:background-image .5s var(--ease); }
+  .present-stage{ position:relative; z-index:2; flex:1; display:flex; align-items:center; justify-content:center; padding:40px clamp(24px,6vw,90px); text-align:center; }
+  .present-slide{ max-width:860px; animation:slideIn .5s var(--ease) both; }
+  @keyframes slideIn{ from{ opacity:0; transform:translateY(18px); } to{ opacity:1; transform:translateY(0); } }
+  .present-kicker{ font-family:'Cormorant Garamond', serif; font-style:italic; letter-spacing:0.35em; text-transform:uppercase; font-size:13px; color:var(--accent-bright); margin-bottom:18px; }
+  .present-title{ font-size:clamp(22px,4vw,34px); font-weight:600; margin:0 0 22px; color:var(--cream); }
+  .present-body{ font-size:clamp(16px,2.6vw,22px); line-height:1.9; color:#ece1cf; white-space:pre-wrap; }
+  .present-bar{ position:relative; z-index:2; display:flex; align-items:center; justify-content:center; gap:18px; padding:18px; }
+  .present-nav{ font-family:'Cormorant Garamond', serif; font-style:italic; background:transparent; border:1px solid var(--accent); color:var(--accent-bright); border-radius:99px; padding:8px 20px; cursor:pointer; font-size:14px; transition:background .25s var(--ease), color .25s var(--ease); }
+  .present-nav:hover{ background:var(--accent); color:var(--wall-3); }
+  .present-dots{ display:flex; gap:7px; }
+  .present-dot{ width:8px; height:8px; border-radius:50%; background:rgba(244,236,220,0.25); transition:background .25s var(--ease); }
+  .present-dot.active{ background:var(--accent-bright); }
+  .present-exit{ position:absolute; top:16px; right:18px; z-index:3; color:var(--cream); background:none; border:none; font-size:28px; cursor:pointer; }
+  @media print{
+    body *{ visibility:hidden; }
+    #worksheetOverlay, #worksheetOverlay *{ visibility:visible; }
+    #worksheetOverlay{ position:absolute; inset:0; background:#fff; display:flex; align-items:flex-start; padding:0; }
+    .worksheet{ box-shadow:none; max-height:none; max-width:none; width:100%; }
+    .no-print{ display:none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="spotlight" id="spotlight"></div>
+<div class="top-actions no-print">
+  <button class="top-btn ghost" onclick="triggerLoad()">이어서 쓰기</button>
+  <button class="top-btn" onclick="openGuide()">선생님 안내</button>
+  <input type="file" id="loadInput" accept=".html" style="display:none">
+</div>
+<header class="gallery-header">
+  <div class="eyebrow">Permanent Collection · 30 Works · Curiosity Wing</div>
+  <h1>모두의 명화로 떠나는 탐구</h1>
+  <div class="credit-line">Copyright@All Teachers</div>
+  <p class="sub">서른 점의 명화 속에 숨겨진 질문들 — 쉬운 호기심에서 시작해 깊은 탐구로 이어집니다.<br>작품마다 표시된 과목 배지를 보고 관심 있는 분야를 골라보세요.</p>
+</header>
+<div class="legend">
+  <span class="legend-item" style="color:#e0a3a3">미술</span>
+  <span class="legend-item" style="color:#7fc4bd">수학·기하</span>
+  <span class="legend-item" style="color:#86b0e0">과학</span>
+  <span class="legend-item" style="color:#e0b35f">역사</span>
+  <span class="legend-item" style="color:#b39ddb">사회</span>
+  <span class="legend-item" style="color:#9bbf8a">윤리·철학</span>
+  <span class="legend-item" style="color:#e3a06e">음악</span>
+  <span class="legend-item" style="color:#b9c468">체육</span>
+  <span class="legend-item" style="color:#d98f6a">국어</span>
+</div>
+<main class="gallery" id="gallery"></main>
+
+<div class="overlay" id="detailOverlay">
+  <div class="detail">
+    <button class="close-btn no-print" onclick="closeDetail()">×</button>
+    <div class="detail-art" id="detailArt"><img id="detailImg" alt=""></div>
+    <div class="detail-info">
+      <div class="plate-num" id="detailNum"></div>
+      <h2 id="detailTitle"></h2>
+      <div class="artist-line" id="detailArtist"></div>
+      <p class="desc" id="detailDesc"></p>
+      <div class="docents" id="docents"></div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="worksheetOverlay">
+  <div class="worksheet">
+    <button class="close-btn no-print" onclick="closeWorksheet()">×</button>
+    <div class="ws-eyebrow">탐구 활동지</div>
+    <h2>나의 명화 탐구 기록</h2>
+    <div class="ws-grid">
+      <div class="ws-field"><label>이름</label><input type="text" id="wsName" placeholder="이름을 적어보세요"></div>
+      <div class="ws-field"><label>학번 / 모둠</label><input type="text" id="wsClass" placeholder="예: 2학년 3반 12번"></div>
+    </div>
+    <div class="ws-field"><label>탐구 작품</label><div class="static" id="wsPainting"></div></div>
+    <div class="ws-field"><label>탐구 질문 (난이도 · 교과)</label><div class="static" id="wsQuestion"></div><div class="static small" id="wsCurriculum"></div></div>
+    <div class="ws-field"><label>1. 이 질문에 대한 나의 첫 생각 (예상·가설)</label><textarea id="ws1" rows="3" placeholder="질문을 보고 처음 떠오른 생각을 자유롭게 적어보세요."></textarea></div>
+    <div class="ws-field"><label>2. 어떻게 탐구해볼까? (탐구 방법)</label><textarea id="ws2" rows="3" placeholder="관찰·비교·조사·실험·자료 검색 등 구체적인 방법을 적어보세요."></textarea></div>
+    <div class="ws-field"><label>3. 조사하고 알아낸 내용</label><textarea id="ws3" rows="5" placeholder="찾아본 자료, 관찰 결과, 비교한 내용을 정리해보세요."></textarea></div>
+    <div class="ws-field"><label>4. 결론 — 새롭게 알게 된 점</label><textarea id="ws4" rows="3" placeholder="처음 생각(가설)과 비교했을 때 무엇을 알게 되었나요?"></textarea></div>
+    <div class="ws-field"><label>5. 더 궁금해진 점 (다음 탐구로 이어가기)</label><textarea id="ws5" rows="2" placeholder="이번 탐구를 통해 새로 생긴 질문이 있다면 적어보세요."></textarea></div>
+    <div class="ws-actions no-print">
+      <button class="ws-btn accent" onclick="openPresent()">발표 화면 보기</button>
+      <button class="ws-btn" onclick="saveWorksheetFile()">저장하기 (.html)</button>
+      <button class="ws-btn secondary" onclick="window.print()">인쇄 / PDF로 저장</button>
+      <button class="ws-btn secondary" onclick="closeWorksheet()">닫기</button>
+    </div>
+    <p class="ws-hint no-print">"저장하기"로 받은 파일을 다음 시간에 첫 화면의 "이어서 쓰기" 버튼으로 불러오면, 작성하던 내용을 그대로 이어서 쓸 수 있어요. "발표 화면 보기"는 지금까지 작성한 내용을 큰 화면 슬라이드로 보여줍니다.</p>
+  </div>
+</div>
+
+<div class="overlay" id="guideOverlay">
+  <div class="guide">
+    <button class="close-btn no-print" onclick="closeGuide()">×</button>
+    <h2>선생님을 위한 안내</h2>
+    <div class="guide-sub">모두의 명화로 떠나는 탐구 — 사용 설명서</div>
+    <h3>이 자료는 무엇인가요</h3>
+    <p>퍼블릭도메인 명화 30점을 출발점으로, 각 작품마다 쉬움·중간·어려움 3단계의 호기심 질문을 제시하는 탐구 도구입니다. 질문은 미술뿐 아니라 수학·과학·역사·사회·윤리·음악·체육·국어 등 다양한 교과로 연결되도록 설계했습니다. 각 작품 카드에는 어떤 교과와 연결되는지 색깔 배지로 표시되어 있어, 학생들이 관심 분야를 보고 작품을 고를 수 있습니다.</p>
+    <h3>학생 활동 흐름</h3>
+    <ol>
+      <li>갤러리에서 과목 배지를 참고해 명화를 고릅니다.</li>
+      <li>작품 설명과 함께 난이도별 질문 3개를 확인합니다.</li>
+      <li>관심 있는 질문을 골라 "이 질문으로 탐구 시작" 버튼을 누릅니다.</li>
+      <li>탐구 활동지(가설 → 방법 → 조사 내용 → 결론 → 추가 질문)를 작성합니다.</li>
+      <li>"발표 화면 보기"로 슬라이드를 띄워 발표하거나, "저장하기"·"인쇄"로 제출합니다.</li>
+    </ol>
+    <h3>이어서 쓰기 (저장 · 불러오기)</h3>
+    <p>학생이 활동지에서 <strong>"저장하기 (.html)"</strong>를 누르면 작성 중인 내용이 담긴 파일이 다운로드됩니다. 다음 차시에 첫 화면 우측 상단의 <strong>"이어서 쓰기"</strong> 버튼을 눌러 그 파일을 선택하면, 활동지가 열리면서 이전에 쓴 내용이 그대로 채워집니다.</p>
+    <h3>발표 화면 모드</h3>
+    <p>활동지를 작성한 뒤 <strong>"발표 화면 보기"</strong>를 누르면 작품 이미지를 배경으로 한 전체화면 슬라이드가 열립니다. 탐구 질문 → 가설 → 탐구 방법 → 조사 내용 → 결론·추가 질문 순서로 한 장씩 넘기며 발표할 수 있습니다. 화살표 버튼이나 키보드 방향키로 이동합니다.</p>
+    <h3>수업 적용 아이디어</h3>
+    <ul>
+      <li><strong>1차시(전체):</strong> 갤러리를 둘러보며 배지를 보고 자신의 관심 교과와 연결된 작품을 찾아봅니다.</li>
+      <li><strong>2차시(모둠):</strong> 모둠별로 작품 1점을 배정하고 '중간' 또는 '어려움' 질문 중 하나를 골라 깊이 탐구합니다.</li>
+      <li><strong>발표:</strong> 발표 화면 모드로 모둠별 발표를 진행하고, 같은 작품의 다른 난이도 질문과 비교해 봅니다.</li>
+      <li><strong>교과 융합:</strong> 한 작품의 세 가지 질문을 서로 다른 교과 선생님들이 각자 수업에서 다루면 교과 융합 수업으로 확장할 수 있습니다.</li>
+    </ul>
+    <h3>2022·2015 개정 교육과정 연계</h3>
+    <p>각 질문 카드 아래에는 관련 있는 2022 개정 및 2015 개정 교육과정의 과목명과 성취기준 영역(주제)을 함께 표시했습니다. 학생의 세부능력 및 특기사항(세특) 작성 시 출발점 참고용으로 활용할 수 있습니다.</p>
+    <h3>배포 및 수정 방법</h3>
+    <p>이 파일은 단일 HTML 파일입니다. GitHub 저장소에 <code>index.html</code>로 올리고 GitHub Pages를 켜면 링크 하나로 학생들과 공유할 수 있습니다. <strong>로컬에서 파일을 더블클릭해 열면(file:// 주소) 이미지가 보안 정책상 차단되어 액자 형태로만 보입니다.</strong> GitHub Pages 등 https 환경에서는 정상적으로 보입니다.</p>
+    <h3>이미지·저작권 안내</h3>
+    <p>모든 명화 이미지는 위키미디어 커먼즈의 퍼블릭도메인 이미지를 직접 불러옵니다. 이미지를 불러오지 못하면 작품 제목이 적힌 액자 형태로 자동 대체됩니다.</p>
+    <div class="note"><strong>※ 성취기준 표기 안내</strong><br>본 자료에 표시된 교육과정 성취기준은 해당 단원·영역을 안내하는 참고 자료입니다. 정확한 성취기준 코드와 문구는 각 학교의 교육과정 재구성안 및 교육부 고시 원문을 통해 다시 확인한 뒤 생활기록부 등 공식 문서에 활용하시기 바랍니다.</div>
+  </div>
+</div>
+
+<div class="present-overlay" id="presentOverlay">
+  <div class="present-bg" id="presentBg"></div>
+  <button class="present-exit no-print" onclick="closePresent()">×</button>
+  <div class="present-stage">
+    <div class="present-slide" id="presentSlide">
+      <div class="present-kicker" id="presentKicker"></div>
+      <div class="present-title" id="presentTitle"></div>
+      <div class="present-body" id="presentBody"></div>
+    </div>
+  </div>
+  <div class="present-bar no-print">
+    <button class="present-nav" onclick="presentPrev()">← 이전</button>
+    <div class="present-dots" id="presentDots"></div>
+    <button class="present-nav" onclick="presentNext()">다음 →</button>
+  </div>
+</div>
+
+<script>
+const ROMAN = ["I","II","III"];
+const DATA = [
+  {
+    title:"진주 귀걸이를 한 소녀", artist:"요하네스 베르메르", year:"1665",
+    file:"Johannes Vermeer (1632-1675) - The Girl With The Pearl Earring (1665).jpg",
+    desc:"네덜란드 황금시대의 대표작. 정체가 알려지지 않은 소녀와 진주 귀걸이의 강렬한 광택이 인상적인 초상화입니다.",
+    levels:[
+      {level:"쉬움", subject:"미술", q:"진주 귀걸이가 실제 진주처럼 반짝이는 것처럼 보이는 까닭은 무엇일까? 화가가 빛을 표현한 방법을 관찰해보자.",
+       curr22:{subject:"미술", area:"지각·표현 — 빛과 명암 표현 기법 탐구"}, curr15:{subject:"미술", area:"표현 — 다양한 표현 방법과 과정"}},
+      {level:"중간", subject:"과학", q:"소녀가 두른 파란 터번에는 '울트라마린'이라는 안료가 쓰였다고 한다. 이 색이 당시 금값보다 비쌌던 이유는 무엇일까?",
+       curr22:{subject:"통합과학1", area:"물질과 규칙성 — 물질의 성질과 안료의 화학적 특성"}, curr15:{subject:"통합과학", area:"물질의 규칙성과 결합"}},
+      {level:"어려움", subject:"사회", q:"이름도 신원도 알려지지 않은 평범한 소녀의 그림이 어떻게 '북유럽의 모나리자'라는 평가를 받게 되었을까?",
+       curr22:{subject:"통합사회2", area:"문화와 다양성 — 예술 작품의 사회적 가치 평가"}, curr15:{subject:"통합사회", area:"문화와 다양성"}}
+    ]
+  },
+  {
+    title:"모나리자", artist:"레오나르도 다빈치", year:"1503년경",
+    file:"Mona Lisa.jpg",
+    desc:"르네상스를 대표하는 초상화로, 부드러운 명암 표현과 신비로운 표정으로 가장 널리 알려진 그림입니다.",
+    levels:[
+      {level:"쉬움", subject:"미술", q:"보는 각도에 따라 모나리자의 표정이 다르게 느껴진다는 이야기가 있다. 정말 그럴까? 직접 관찰해보자.",
+       curr22:{subject:"미술", area:"지각 — 명암 대비와 시각적 인상"}, curr15:{subject:"미술", area:"체험 — 지각과 반응"}},
+      {level:"중간", subject:"과학", q:"배경의 풍경은 멀어질수록 흐릿하고 푸르게 그려져 있다. 이런 표현은 어떤 원리를 이용한 것일까?",
+       curr22:{subject:"통합과학1", area:"빛과 물질 — 빛의 산란과 거리에 따른 색 변화"}, curr15:{subject:"통합과학", area:"자연의 구성물질 — 빛과 색"}},
+      {level:"어려움", subject:"역사", q:"다빈치는 화가이자 해부학 연구자이기도 했다. 그의 과학적 연구가 인물의 자세와 비례 표현에 어떤 영향을 주었을까?",
+       curr22:{subject:"세계사", area:"유럽 근대의 형성 — 르네상스와 과학적 사고의 확산"}, curr15:{subject:"세계사", area:"유럽 사회의 형성과 변화"}}
+    ]
+  },
+  {
+    title:"가나가와 해변의 높은 파도", artist:"가쓰시카 호쿠사이", year:"1831년경",
+    file:"Tsunami by hokusai 19th century.jpg",
+    desc:"일본 우키요에 판화의 대표작으로, 거대한 파도와 멀리 보이는 후지산의 대비가 특징입니다.",
+    levels:[
+      {level:"쉬움", subject:"수학", q:"그림 속 파도의 곡선 모양은 실제 파도와 얼마나 닮았을까? 사진 속 파도와 비교해보자.",
+       curr22:{subject:"공통수학2", area:"도형과 측정 — 곡선의 형태와 규칙성 탐구"}, curr15:{subject:"수학", area:"도형의 방정식"}},
+      {level:"중간", subject:"과학", q:"부서지는 파도의 한 순간을 정지된 그림으로 표현했다. 움직이는 현상을 멈춰진 이미지로 표현하는 것은 어떤 의미가 있을까?",
+       curr22:{subject:"통합과학2", area:"역학과 에너지 — 유체의 운동과 충돌"}, curr15:{subject:"물리학Ⅰ", area:"역학적 상호작용"}},
+      {level:"어려움", subject:"역사", q:"이 작품은 19세기 유럽 화가들에게 큰 영향을 주었다고 한다. 서로 멀리 떨어진 두 문화의 예술은 어떻게 교류할 수 있었을까?",
+       curr22:{subject:"세계사", area:"교류와 변화 — 동서 문화 교류와 예술 사조의 전파"}, curr15:{subject:"세계사", area:"교류의 확대와 전통 사회의 변화"}}
+    ]
+  },
+  {
+    title:"별이 빛나는 밤", artist:"빈센트 반 고흐", year:"1889",
+    file:"Van Gogh - Starry Night - Google Art Project.jpg",
+    desc:"소용돌이치는 밤하늘과 별빛을 강렬한 색채와 붓질로 표현한 후기 인상주의의 대표작입니다.",
+    levels:[
+      {level:"쉬움", subject:"과학", q:"노란 별과 파란 하늘이 함께 있으면 왜 더 강렬하고 또렷하게 보일까?",
+       curr22:{subject:"통합과학1", area:"빛과 물질 — 보색 대비와 색의 혼합 원리"}, curr15:{subject:"통합과학", area:"자연의 구성물질 — 빛과 전자기파"}},
+      {level:"중간", subject:"수학·과학", q:"하늘의 소용돌이 무늬는 실제 공기나 물의 흐름(난류) 모양과 얼마나 닮았을까?",
+       curr22:{subject:"통합과학2", area:"역학과 에너지 — 유체의 흐름과 패턴(난류)"}, curr15:{subject:"물리학Ⅰ", area:"유체의 운동"}},
+      {level:"어려움", subject:"윤리", q:"마음이 힘든 시기에 그려진 작품을, 작가의 삶과 분리해서 평가하는 것이 가능할까? 또는 그래야 할까?",
+       curr22:{subject:"생활과 윤리", area:"예술과 윤리 — 예술 작품과 작가 삶의 분리 가능성"}, curr15:{subject:"생활과 윤리", area:"예술과 대중문화의 윤리적 문제"}}
+    ]
+  },
+  {
+    title:"만종", artist:"장 프랑수아 밀레", year:"1857–1859",
+    file:"Jean-François Millet - The Angelus - Google Art Project.jpg",
+    desc:"하루 일을 마친 농부 부부가 저녁 종소리에 맞춰 기도하는 모습을 그린 작품입니다.",
+    levels:[
+      {level:"쉬움", subject:"사회", q:"그림 속 농부들의 노동 모습은 오늘날의 농사일과 어떻게 다를까?",
+       curr22:{subject:"통합사회1", area:"인간과 공동체 — 산업화에 따른 노동 형태의 변화"}, curr15:{subject:"통합사회", area:"산업화와 다양성"}},
+      {level:"중간", subject:"역사", q:"이 그림이 그려진 19세기 프랑스에서, 농민의 삶은 사회적으로 어떤 시선을 받았을까?",
+       curr22:{subject:"세계사", area:"산업 사회의 형성 — 농민층의 삶과 변화"}, curr15:{subject:"세계사", area:"유럽의 산업화와 시민사회 형성"}},
+      {level:"어려움", subject:"윤리", q:"평범한 노동의 한 장면이 왜 '성스럽다'는 느낌을 주는 걸까? 일상과 종교적 감정은 어떻게 연결될 수 있을까?",
+       curr22:{subject:"생활과 윤리", area:"삶의 의미 — 노동과 일상에 대한 윤리적 성찰"}, curr15:{subject:"생활과 윤리", area:"삶과 죽음의 윤리"}}
+    ]
+  },
+  {
+    title:"비너스의 탄생", artist:"산드로 보티첼리", year:"1485년경",
+    file:"Birth of Venus Botticelli.jpg",
+    desc:"그리스 신화 속 미의 여신 비너스가 바다에서 탄생하는 순간을 그린 르네상스 시대의 대표작입니다.",
+    levels:[
+      {level:"쉬움", subject:"미술", q:"비너스의 자세와 흘러내리는 머리카락은 어떤 자연물(식물·물결 등)의 형태와 닮아 있을까?",
+       curr22:{subject:"미술", area:"표현 — 자연물의 형태와 조형 요소 탐구"}, curr15:{subject:"미술", area:"표현 — 조형 요소와 원리"}},
+      {level:"중간", subject:"수학", q:"비너스의 신체 비율을 실제로 측정해보면, 흔히 말하는 '황금비'와 얼마나 가까울까?",
+       curr22:{subject:"기하", area:"도형의 닮음과 비율"}, curr15:{subject:"수학Ⅰ", area:"도형의 닮음과 비율"}},
+      {level:"어려움", subject:"역사", q:"중세 동안 보기 어려웠던 그리스·로마 신화 속 나체상이, 르네상스 시기에 다시 등장할 수 있었던 사회적 배경은 무엇일까?",
+       curr22:{subject:"세계사", area:"르네상스와 인문주의 — 고전 문화의 재발견"}, curr15:{subject:"세계사", area:"유럽 사회의 변화와 르네상스"}}
+    ]
+  },
+  {
+    title:"절규", artist:"에드바르 뭉크", year:"1893",
+    file:"The Scream.jpg",
+    desc:"인물의 극심한 불안과 공포를 일그러진 형태와 강렬한 색채로 표현한, 표현주의의 상징적인 작품입니다.",
+    levels:[
+      {level:"쉬움", subject:"미술", q:"이 그림은 왜 '불안'이나 '공포'를 표현한 그림으로 평가받을까? 색과 선의 모양을 자세히 살펴보자.",
+       curr22:{subject:"미술", area:"표현 — 색과 형태를 통한 감정 표현"}, curr15:{subject:"미술", area:"표현 — 주제와 표현 방법"}},
+      {level:"중간", subject:"과학", q:"배경의 붉고 소용돌이치는 하늘이 실제 자연현상(화산 폭발로 인한 노을 등)에서 영감을 받았다는 이야기가 있다. 과학적으로 가능한 일일까?",
+       curr22:{subject:"통합과학2", area:"지구 시스템 — 화산 활동과 대기·기상 현상"}, curr15:{subject:"지구과학Ⅰ", area:"지구의 변화와 대기"}},
+      {level:"어려움", subject:"윤리", q:"한 사람의 내면 감정을 그림으로 표현하면, 그것을 본 다른 사람도 같은 감정을 '느낄' 수 있을까? 감정은 어디까지 전달될 수 있을까?",
+       curr22:{subject:"생활과 윤리", area:"예술과 윤리 — 감정 표현과 공감의 의미"}, curr15:{subject:"생활과 윤리", area:"예술과 도덕적 가치 판단"}}
+    ]
+  },
+  {
+    title:"키스", artist:"구스타프 클림트", year:"1907–1908",
+    file:"Klimt - The Kiss.jpg",
+    desc:"금빛 장식 무늬로 뒤덮인 두 인물을 통해 사랑과 황홀감을 표현한, 빈 분리파를 대표하는 작품입니다.",
+    levels:[
+      {level:"쉬움", subject:"미술·수학", q:"옷을 뒤덮은 무늬들은 어떤 기본 도형이 반복되거나 대칭을 이루며 만들어졌을까?",
+       curr22:{subject:"미술", area:"표현 — 반복·대칭을 활용한 패턴 디자인"}, curr15:{subject:"미술", area:"표현 — 조형 요소와 원리(반복, 대칭)"}},
+      {level:"중간", subject:"과학", q:"이 그림에는 실제 금박이 사용되었다고 한다. 금이라는 금속이 안료나 장식 재료로 쓰일 수 있는 성질은 무엇일까?",
+       curr22:{subject:"통합과학1", area:"물질과 규칙성 — 금속의 성질과 활용"}, curr15:{subject:"화학Ⅰ", area:"물질의 구조와 성질"}},
+      {level:"어려움", subject:"역사", q:"20세기 초 빈에서는 왜 화가들이 기존의 화풍에서 벗어나 새로운 시도를 하려고 했을까? 그 시대적 배경은 무엇일까?",
+       curr22:{subject:"세계사", area:"현대 세계의 변화 — 20세기 초 유럽의 예술·사회 변동"}, curr15:{subject:"세계사", area:"현대 세계의 변화"}}
+    ]
+  },
+  {
+    title:"민중을 이끄는 자유의 여신", artist:"외젠 들라크루아", year:"1830",
+    file:"Eugène Delacroix - Le 28 Juillet. La Liberté guidant le peuple.jpg",
+    desc:"1830년 프랑스 7월 혁명을 배경으로, 자유를 상징하는 여인이 시민들을 이끄는 모습을 그린 작품입니다.",
+    levels:[
+      {level:"쉬움", subject:"미술", q:"그림 속 인물들의 표정과 자세에서 어떤 감정이 느껴지는가? 인물별로 비교해보자.",
+       curr22:{subject:"미술", area:"감상 — 인물 표현과 감정 해석"}, curr15:{subject:"미술", area:"감상 — 작품과 배경의 이해"}},
+      {level:"중간", subject:"역사", q:"이 그림은 실제 사건(1830년 7월 혁명)을 그대로 옮긴 것일까, 화가의 상상이 더해진 것일까?",
+       curr22:{subject:"세계사", area:"시민 혁명 — 프랑스 혁명과 자유주의의 확산"}, curr15:{subject:"세계사", area:"시민 혁명과 국민 국가의 형성"}},
+      {level:"어려움", subject:"사회", q:"한 장의 그림이 '혁명의 상징'이 되어, 이후에도 계속 정치적인 의미로 사용된다는 것은 무엇을 보여줄까?",
+       curr22:{subject:"통합사회2", area:"정치 참여 — 이미지와 상징의 정치적 활용"}, curr15:{subject:"통합사회", area:"인권 보장과 정치 참여"}}
+    ]
+  },
+  {
+    title:"시녀들 (라스 메니나스)", artist:"디에고 벨라스케스", year:"1656",
+    file:"Las Meninas 01.jpg",
+    desc:"스페인 왕실의 어린 공주와 시녀들, 그리고 거울에 비친 인물들을 통해 보는 이와 그려진 대상의 관계를 실험한 작품입니다.",
+    levels:[
+      {level:"쉬움", subject:"미술", q:"이 그림에서 '진짜 주인공'은 누구일까? 화면 가운데가 아닌 인물들에도 주목해보자.",
+       curr22:{subject:"미술", area:"감상 — 작품의 구성과 시선의 흐름 분석"}, curr15:{subject:"미술", area:"감상 — 작품의 분석과 해석"}},
+      {level:"중간", subject:"수학", q:"인물들과 공간의 깊이감은 어떤 원리로 표현되었을까? 선들이 모이는 지점을 찾아보자.",
+       curr22:{subject:"기하", area:"공간 도형과 사영 — 시점과 깊이감의 표현"}, curr15:{subject:"기하와 벡터", area:"공간 도형과 좌표"}},
+      {level:"어려움", subject:"철학", q:"화가가 자기 자신이 그림을 그리는 모습까지 그려 넣었다는 것은, '보는 사람'과 '그려지는 대상'의 관계에 대해 무엇을 이야기하는 걸까?",
+       curr22:{subject:"인문학과 윤리", area:"인식과 존재 — 보는 자와 보이는 대상의 관계"}, curr15:{subject:"고전과 윤리", area:"인간과 세계에 대한 철학적 성찰"}}
+    ]
+  },
+  {
+    title:"아테네 학당", artist:"라파엘로", year:"1509–1511",
+    file:"\"The School of Athens\" by Raffaello Sanzio da Urbino.jpg",
+    desc:"고대 그리스의 철학자와 학자들을 한 공간에 모아 놓은, 르네상스 인문주의를 상징하는 대형 벽화입니다.",
+    levels:[
+      {level:"쉬움", subject:"미술", q:"중심에 있는 두 인물(플라톤과 아리스토텔레스)은 서로 다른 손짓을 하고 있다. 이 손짓은 각각 어떤 생각을 상징할까?",
+       curr22:{subject:"미술", area:"감상 — 인물의 자세와 상징적 표현 해석"}, curr15:{subject:"미술", area:"감상 — 작품 속 인물과 상징"}},
+      {level:"중간", subject:"수학", q:"그림 한쪽에는 컴퍼스로 도형을 그리는 인물(유클리드로 추정)이 있다. 이 장면은 어떤 수학적 활동을 나타낸 것일까?",
+       curr22:{subject:"기하", area:"작도와 도형의 성질 — 컴퍼스를 이용한 도형 작도"}, curr15:{subject:"수학", area:"도형의 성질과 작도"}},
+      {level:"어려움", subject:"철학", q:"시대가 다른 여러 학자들을 한 공간에 함께 그린 것은 무엇을 표현하고 싶었던 걸까? '지식의 전통'이라는 개념을 어떻게 시각화할 수 있을까?",
+       curr22:{subject:"인문학과 윤리", area:"지식과 전통 — 학문의 계승과 통합적 사고"}, curr15:{subject:"고전과 윤리", area:"인간과 사상의 흐름"}}
+    ]
+  },
+  {
+    title:"최후의 만찬", artist:"레오나르도 다빈치", year:"1495–1498",
+    file:"Leonardo da Vinci (1452-1519) - The Last Supper (1495-1498).jpg",
+    desc:"예수와 12명의 제자가 식탁에 둘러앉은 장면을 정밀한 원근법으로 표현한 르네상스 벽화입니다.",
+    levels:[
+      {level:"쉬움", subject:"미술", q:"그림 속 모든 선이 한 점(예수의 머리)으로 모이도록 그려졌다고 한다. 실제로 그런지 직접 선을 그어 확인해보자.",
+       curr22:{subject:"미술", area:"표현 — 원근법과 시선의 집중"}, curr15:{subject:"미술", area:"표현 — 공간 표현 방법"}},
+      {level:"중간", subject:"수학", q:"그림 속 소실점과 선들이 만드는 구조를 좌표와 직선의 방정식으로 표현할 수 있을까?",
+       curr22:{subject:"공통수학2", area:"도형의 방정식 — 직선과 소실점의 관계"}, curr15:{subject:"수학", area:"도형의 방정식"}},
+      {level:"어려움", subject:"국어", q:"12명의 제자는 각자 다른 표정과 몸짓으로 '동요'를 표현하고 있다. 한 장면 속에서 여러 인물의 감정을 동시에 표현하는 것은 이야기 전달에 어떤 효과가 있을까?",
+       curr22:{subject:"문학", area:"서사와 인물 — 한 장면 속 다중 시점의 표현"}, curr15:{subject:"국어", area:"문학 작품의 인물과 서술 방식"}}
+    ]
+  },
+  {
+    title:"이삭 줍는 여인들", artist:"장 프랑수아 밀레", year:"1857",
+    file:"Jean-François Millet - Gleaners - Google Art Project 2.jpg",
+    desc:"추수가 끝난 들판에서 떨어진 이삭을 줍는 세 여인의 모습을 통해 농촌 노동자의 삶을 사실적으로 그린 작품입니다.",
+    levels:[
+      {level:"쉬움", subject:"사회", q:"세 여인은 비슷한 자세로 허리를 굽히고 있다. 이런 반복된 동작은 어떤 노동의 특징을 보여줄까?",
+       curr22:{subject:"통합사회1", area:"노동과 삶 — 농업 노동의 형태와 특징"}, curr15:{subject:"통합사회", area:"행복과 삶의 의미"}},
+      {level:"중간", subject:"역사", q:"이삭 줍기는 추수 후 남은 곡식을 가난한 사람들이 주워 가도록 허용한 풍습이었다. 이런 풍습은 당시 사회에서 어떤 역할을 했을까?",
+       curr22:{subject:"세계사", area:"근대 유럽 사회 — 농촌 공동체의 관습과 빈곤 구제"}, curr15:{subject:"세계사", area:"유럽 근대 사회의 형성"}},
+      {level:"어려움", subject:"윤리", q:"이 그림이 처음 전시되었을 때 일부 사람들은 '가난을 미화한다'며 비판했다. 가난을 그림의 주제로 다루는 것은 예술가에게 어떤 책임을 요구할까?",
+       curr22:{subject:"생활과 윤리", area:"예술과 사회적 책임 — 빈곤 표현의 윤리"}, curr15:{subject:"생활과 윤리", area:"예술과 도덕적 가치 판단"}}
+    ]
+  },
+  {
+    title:"물랭 드 라 갈레트의 무도회", artist:"피에르 오귀스트 르누아르", year:"1876",
+    file:"Pierre-Auguste Renoir - Bal du moulin de la Galette.jpg",
+    desc:"파리 몽마르트르의 야외 무도회장에서 사람들이 춤추고 어울리는 모습을 빛과 색채로 생동감 있게 그린 인상주의 작품입니다.",
+    levels:[
+      {level:"쉬움", subject:"음악", q:"그림 속 사람들은 춤을 추고 있다. 19세기 파리의 무도회에서는 어떤 음악과 춤이 유행했을까?",
+       curr22:{subject:"음악", area:"음악과 사회 — 시대별 춤과 음악 양식"}, curr15:{subject:"음악", area:"음악사 — 시대와 양식"}},
+      {level:"중간", subject:"체육", q:"왈츠 같은 사교댄스는 일정한 박자에 맞춰 반복되는 스텝으로 이루어진다. 춤의 스텝을 신체 활동의 관점에서 분석하면 어떤 운동 효과가 있을까?",
+       curr22:{subject:"체육", area:"신체 활동과 표현 — 리듬 운동의 효과"}, curr15:{subject:"체육", area:"표현 활동과 신체 리듬"}},
+      {level:"어려움", subject:"사회", q:"이 그림은 노동자와 서민들이 여가를 즐기는 모습을 그렸다. 산업화 이후 '여가 시간'이 사회적으로 등장한 것은 어떤 의미를 가질까?",
+       curr22:{subject:"통합사회1", area:"산업화와 여가 — 여가 문화의 등장과 의미"}, curr15:{subject:"통합사회", area:"산업화와 다양성"}}
+    ]
+  },
+  {
+    title:"발레 수업", artist:"에드가 드가", year:"1874",
+    file:"Edgar Degas - The Dance Class - Google Art Project.jpg",
+    desc:"발레 수업을 받는 어린 무용수들과 지도하는 발레 마스터의 모습을 한 장면 속에 담은 작품입니다.",
+    levels:[
+      {level:"쉬움", subject:"체육", q:"무용수들의 자세는 제각각이다. 발레의 기본 자세(턴아웃, 균형 등)는 신체의 어떤 근육과 관절을 사용할까?",
+       curr22:{subject:"체육", area:"신체 활동 — 균형과 자세의 운동역학"}, curr15:{subject:"체육", area:"건강과 체력 — 자세와 균형"}},
+      {level:"중간", subject:"음악", q:"발레는 음악의 박자와 선율에 맞춰 동작을 구성한다. 무용과 음악의 박자가 어긋나면 어떤 일이 벌어질까? 음악 없이 춤을 출 수 있을까?",
+       curr22:{subject:"음악", area:"음악과 신체 표현 — 박자와 동작의 관계"}, curr15:{subject:"음악", area:"음악과 다른 예술의 연계"}},
+      {level:"어려움", subject:"미술", q:"화가는 무용수들을 무대 위가 아닌 '연습' 장면으로 그렸다. 완성된 공연이 아닌 '준비 과정'을 그리는 것은 감상자에게 어떤 인상을 줄까?",
+       curr22:{subject:"미술", area:"감상 — 장면 선택과 주제 해석"}, curr15:{subject:"미술", area:"감상 — 작품의 의도와 해석"}}
+    ]
+  },
+  {
+    title:"거울을 보는 비너스", artist:"디에고 벨라스케스", year:"1647–1651",
+    file:"The Toilet of Venus by Diego Velázquez.jpg",
+    desc:"비너스가 거울을 통해 자신의 모습을 바라보는 장면을 그린, 스페인 미술에서 드물게 여성의 누드를 다룬 작품입니다.",
+    levels:[
+      {level:"쉬움", subject:"미술", q:"거울에 비친 얼굴은 실제 얼굴과 같은 모습일까, 다른 모습일까? 거울에 비친 이미지가 어떻게 그려졌는지 관찰해보자.",
+       curr22:{subject:"미술", area:"표현 — 반사와 이미지의 재현"}, curr15:{subject:"미술", area:"표현 — 사실적 재현"}},
+      {level:"중간", subject:"과학", q:"거울에 비친 상의 위치와 인물의 위치 관계를 광학적으로(반사 법칙) 따져보면, 실제로 그 부분이 거울에 보이는 것이 가능할까?",
+       curr22:{subject:"통합과학1", area:"빛과 물질 — 반사 법칙과 거울 속 상"}, curr15:{subject:"통합과학", area:"빛과 색"}},
+      {level:"어려움", subject:"윤리", q:"이 작품은 한때 훼손 공격을 당한 적이 있다. 사람들이 특정 미술 작품에 강하게 반응하는 이유는 무엇일까? 예술 작품과 사회적 가치관은 어떻게 충돌할 수 있을까?",
+       curr22:{subject:"생활과 윤리", area:"예술과 사회 — 작품을 둘러싼 사회적 논쟁"}, curr15:{subject:"생활과 윤리", area:"대중문화와 예술의 윤리적 문제"}}
+    ]
+  },
+  {
+    title:"인상, 해돋이", artist:"클로드 모네", year:"1872",
+    file:"Monet - Impression, Sunrise.jpg",
+    desc:"항구의 해 뜨는 풍경을 빠른 붓질과 흐릿한 윤곽으로 그린, '인상주의'라는 이름이 탄생하게 된 작품입니다.",
+    levels:[
+      {level:"쉬움", subject:"미술", q:"그림 속 해는 윤곽이 뚜렷하지 않고 주변과 비슷한 밝기로 그려져 있다. 왜 화가는 해를 또렷하게 그리지 않았을까?",
+       curr22:{subject:"미술", area:"표현 — 빛의 순간적 인상 표현"}, curr15:{subject:"미술", area:"표현 — 빛과 색의 인상"}},
+      {level:"중간", subject:"과학", q:"이른 아침 안개 속의 해는 왜 흐릿하고 붉게 보일까? 빛의 산란과 대기 중 수증기의 관계로 설명할 수 있을까?",
+       curr22:{subject:"통합과학1", area:"빛과 물질 — 대기 중 빛의 산란"}, curr15:{subject:"통합과학", area:"자연의 구성물질 — 빛과 색"}},
+      {level:"어려움", subject:"역사", q:"이 그림의 제목에서 '인상주의'라는 명칭이 비판적으로 붙여졌다고 한다. 새로운 예술 양식이 처음에는 비판받다가 나중에 하나의 '사조'로 인정받는 과정은 어떤 사회적 의미를 가질까?",
+       curr22:{subject:"세계사", area:"근대 문화의 변화 — 새로운 예술 사조의 형성과 수용"}, curr15:{subject:"세계사", area:"유럽 사회의 변화와 근대 문화"}}
+    ]
+  },
+  {
+    title:"아르놀피니의 결혼", artist:"얀 반 에이크", year:"1434",
+    file:"Van Eyck - Arnolfini Portrait.jpg",
+    desc:"상인 부부의 결혼 장면을 정교한 세부 묘사와 거울 속 반사 이미지로 표현한 북유럽 르네상스의 대표작입니다.",
+    levels:[
+      {level:"쉬움", subject:"미술", q:"방 안쪽 벽에 작은 거울이 걸려 있고, 그 안에는 인물들의 뒷모습과 또 다른 사람이 비춰져 있다. 거울 속 모습을 자세히 관찰해보자.",
+       curr22:{subject:"미술", area:"감상 — 세부 묘사와 숨겨진 이미지 찾기"}, curr15:{subject:"미술", area:"감상 — 작품의 세부 요소 분석"}},
+      {level:"중간", subject:"수학", q:"둥근 거울에 비친 모습은 평면 거울과 다르게 왜곡되어 보인다. 곡면 거울에서 상이 왜곡되는 이유를 기하학적으로 설명할 수 있을까?",
+       curr22:{subject:"기하", area:"이차곡선과 도형 — 곡면에서의 상의 왜곡"}, curr15:{subject:"기하와 벡터", area:"이차곡선의 성질"}},
+      {level:"어려움", subject:"사회", q:"그림 속 부부는 값비싼 옷과 가구, 장식품으로 둘러싸여 있다. 결혼식 장면에 이런 물건들을 가득 그려 넣은 것은 무엇을 보여주려는 의도였을까?",
+       curr22:{subject:"통합사회2", area:"경제와 신분 — 재산과 사회적 지위의 시각적 표현"}, curr15:{subject:"통합사회", area:"문화와 다양성"}}
+    ]
+  },
+  {
+    title:"우유 따르는 여인", artist:"요하네스 베르메르", year:"1658년경",
+    file:"Johannes Vermeer - The Milkmaid.jpg",
+    desc:"부엌에서 그릇에 우유를 따르는 하녀의 모습을 고요하고 정밀하게 그린 작품입니다.",
+    levels:[
+      {level:"쉬움", subject:"과학", q:"그릇에서 흘러내리는 우유의 줄기는 가늘고 일정한 모양을 유지하고 있다. 액체가 좁은 곳을 통해 흘러내릴 때 왜 이런 모양이 될까?",
+       curr22:{subject:"통합과학2", area:"역학과 에너지 — 유체의 흐름과 표면장력"}, curr15:{subject:"물리학Ⅰ", area:"역학적 상호작용"}},
+      {level:"중간", subject:"미술", q:"벽에 박힌 못과 작은 못 구멍까지 세밀하게 그려져 있다. 이런 '사소한' 세부 묘사가 그림 전체의 분위기에 어떤 영향을 줄까?",
+       curr22:{subject:"미술", area:"표현 — 세부 묘사와 사실성"}, curr15:{subject:"미술", area:"표현 — 사실적 표현 방법"}},
+      {level:"어려움", subject:"사회", q:"이 그림의 주인공은 가사노동을 하는 평범한 하녀이다. 평범한 사람의 일상 노동을 '예술의 주제'로 삼는 것은 그 시대 사람들의 가치관에 대해 무엇을 말해줄까?",
+       curr22:{subject:"통합사회1", area:"노동의 가치 — 일상 노동에 대한 사회적 인식"}, curr15:{subject:"통합사회", area:"행복과 삶의 의미"}}
+    ]
+  },
+  {
+    title:"맥스 슈미트의 단독 조정 경기", artist:"토머스 에이킨스", year:"1871",
+    file:"Thomas Eakins, The Champion Single Sculls (Max Schmitt in a Single Scull), 1871.jpg",
+    desc:"미국 필라델피아의 강에서 조정(로잉) 경기를 하는 선수의 모습을 사실적으로 그린 작품입니다.",
+    levels:[
+      {level:"쉬움", subject:"체육", q:"조정 선수는 노를 일정한 리듬으로 저어야 한다. 노를 젓는 동작에서 가장 큰 힘을 쓰는 신체 부위는 어디일까?",
+       curr22:{subject:"체육", area:"신체 활동 — 동작 분석과 사용 근육"}, curr15:{subject:"체육", area:"운동 기술의 이해"}},
+      {level:"중간", subject:"수학", q:"보트가 물 위를 미끄러져 가는 속도는 노를 젓는 힘, 시간과 관련이 있다. 이런 관계를 함수나 그래프로 표현할 수 있을까?",
+       curr22:{subject:"공통수학1", area:"함수 — 속력과 시간의 관계 표현"}, curr15:{subject:"수학", area:"함수와 그래프"}},
+      {level:"어려움", subject:"과학", q:"물 위의 보트는 물의 저항(항력)을 받는다. 보트의 모양이 길고 좁을수록 저항이 줄어드는 이유를 유체의 흐름으로 설명할 수 있을까?",
+       curr22:{subject:"통합과학2", area:"역학과 에너지 — 유체 저항과 물체의 운동"}, curr15:{subject:"물리학Ⅰ", area:"역학적 상호작용"}}
+    ]
+  },
+  {
+    title:"눈 속의 사냥꾼들", artist:"피터 브뤼헐", year:"1565",
+    file:"Pieter Bruegel the Elder - Hunters in the Snow (Winter) - Google Art Project.jpg",
+    desc:"눈 덮인 마을과 얼어붙은 연못, 사냥에서 돌아오는 사람들의 모습으로 겨울 풍경을 그린 작품입니다.",
+    levels:[
+      {level:"쉬움", subject:"체육", q:"마을 사람들이 얼어붙은 연못 위에서 무언가를 하고 있다. 빙판 위에서 하는 신체 활동에는 어떤 것들이 있고, 왜 균형을 잡기 어려울까?",
+       curr22:{subject:"체육", area:"신체 활동 — 빙상 활동과 균형감각"}, curr15:{subject:"체육", area:"표현 활동 — 균형과 안전"}},
+      {level:"중간", subject:"과학", q:"이 그림은 유럽이 매우 추웠던 시기(소빙기)에 그려졌다고 알려져 있다. 특정 시기에 기후가 전 지역적으로 추워지는 현상은 어떤 원인으로 설명할 수 있을까?",
+       curr22:{subject:"통합과학2", area:"지구 시스템 — 기후 변동의 원인"}, curr15:{subject:"지구과학Ⅰ", area:"지구의 기후 변화"}},
+      {level:"어려움", subject:"역사", q:"한 폭의 풍경화 속에 사냥, 노동, 놀이 등 여러 사람들의 일상이 동시에 담겨 있다. 이런 '풍경 속 군중 묘사'는 그 시대 사람들의 삶을 기록하는 데 어떤 역할을 했을까?",
+       curr22:{subject:"세계사", area:"근대 유럽의 일상 — 풍경화와 생활사 기록"}, curr15:{subject:"세계사", area:"유럽 사회의 형성과 변화"}}
+    ]
+  },
+  {
+    title:"씨 뿌리는 사람", artist:"장 프랑수아 밀레", year:"1850",
+    file:"Jean-François Millet - The Sower - Google Art Project.jpg",
+    desc:"해 질 무렵 들판에 씨를 뿌리는 농부의 역동적인 동작을 그린 작품입니다.",
+    levels:[
+      {level:"쉬움", subject:"체육", q:"농부는 한쪽 다리를 앞으로 내밀고 팔을 크게 휘두르며 씨를 뿌리고 있다. 이 동작과 비슷한 신체 움직임을 사용하는 운동(투구, 던지기 등)에는 무엇이 있을까?",
+       curr22:{subject:"체육", area:"신체 활동 — 던지기 동작의 운동 원리"}, curr15:{subject:"체육", area:"도전 활동 — 동작의 원리"}},
+      {level:"중간", subject:"과학", q:"씨를 뿌릴 때 손에서 떠난 씨앗은 포물선을 그리며 떨어진다. 씨앗이 퍼지는 범위는 던지는 속도와 각도에 따라 어떻게 달라질까?",
+       curr22:{subject:"통합과학2", area:"역학과 에너지 — 포물선 운동"}, curr15:{subject:"물리학Ⅰ", area:"역학적 상호작용"}},
+      {level:"어려움", subject:"사회", q:"씨 뿌리기는 한 해 농사의 시작을 의미한다. 농업 사회에서 '씨 뿌리는 시기'를 정하는 일은 왜 공동체 전체에게 중요한 문제였을까?",
+       curr22:{subject:"통합사회1", area:"자연환경과 삶 — 농업 사회의 시간과 공동체"}, curr15:{subject:"통합사회", area:"자연환경과 인간"}}
+    ]
+  },
+  {
+    title:"알프스를 넘는 나폴레옹", artist:"자크 루이 다비드", year:"1801",
+    file:"Jacques-Louis David - Napoleon Crossing the Alps.jpg",
+    desc:"나폴레옹이 말을 타고 알프스산을 넘는 영웅적인 모습을 역동적으로 그린 작품입니다.",
+    levels:[
+      {level:"쉬움", subject:"체육", q:"말은 앞다리를 높이 들고 있고, 나폴레옹은 한 손으로 방향을 가리키고 있다. 이런 자세를 유지하려면 기수는 어떤 균형 감각과 근력이 필요할까?",
+       curr22:{subject:"체육", area:"신체 활동 — 동물과 함께하는 운동에서의 균형"}, curr15:{subject:"체육", area:"건강과 체력 — 균형과 협응력"}},
+      {level:"중간", subject:"미술", q:"실제로 나폴레옹은 이 원정 때 말이 아닌 노새를 타고 평범한 옷을 입었다고 한다. 화가는 왜 사실과 다르게 그렸을까?",
+       curr22:{subject:"미술", area:"표현 — 이상화와 과장된 표현"}, curr15:{subject:"미술", area:"표현 — 의도에 따른 표현 방법"}},
+      {level:"어려움", subject:"사회", q:"이 그림은 나폴레옹의 권력을 선전하기 위한 목적으로 그려졌다. 통치자의 이미지를 의도적으로 '연출'하는 것은 오늘날의 정치 홍보와 어떤 점이 비슷하고 다를까?",
+       curr22:{subject:"통합사회2", area:"정치와 미디어 — 권력자의 이미지 형성과 정치 선전"}, curr15:{subject:"통합사회", area:"인권 보장과 정치 참여"}}
+    ]
+  },
+  {
+    title:"비트루비우스 인체비례도", artist:"레오나르도 다빈치", year:"1490년경",
+    file:"Da Vinci Vitruve Luc Viatour.jpg",
+    desc:"팔과 다리를 벌린 인체를 원과 정사각형 안에 배치하여, 인체의 이상적인 비례를 탐구한 다빈치의 드로잉입니다.",
+    levels:[
+      {level:"쉬움", subject:"체육", q:"그림 속 인물은 팔다리를 벌린 두 가지 자세로 겹쳐 그려져 있다. 팔다리를 벌렸을 때와 모았을 때, 우리 몸이 차지하는 공간은 어떻게 달라질까?",
+       curr22:{subject:"체육", area:"신체 활동 — 신체의 가동 범위와 공간"}, curr15:{subject:"체육", area:"건강과 체력 — 신체 인식"}},
+      {level:"중간", subject:"수학", q:"다빈치는 사람이 팔을 벌린 길이가 키와 거의 같다고 생각했다. 실제로 친구들의 키와 팔 길이를 재서 비교하면 정말 비슷할까?",
+       curr22:{subject:"공통수학2", area:"도형과 측정 — 비와 비율의 실측 검증"}, curr15:{subject:"수학", area:"통계와 비율"}},
+      {level:"어려움", subject:"과학", q:"다빈치는 고대 건축가 비트루비우스가 제시한 '이상적 인체 비례' 이론을 그림으로 표현했다. 인체를 수학적 비례로 설명하려는 시도는 의학·공학에서 지금도 어떻게 활용될까?",
+       curr22:{subject:"통합과학1", area:"과학과 인체 — 인체 비례 모델의 활용"}, curr15:{subject:"생명과학Ⅰ", area:"인체의 구조와 기능"}}
+    ]
+  },
+  {
+    title:"감자 먹는 사람들", artist:"빈센트 반 고흐", year:"1885",
+    file:"Van Gogh - The Potato Eaters.jpg",
+    desc:"어두운 농가에서 등불 아래 감자를 먹는 가족의 모습을 거칠고 어두운 색채로 그린 초기작입니다.",
+    levels:[
+      {level:"쉬움", subject:"미술", q:"이 그림은 반 고흐의 후기 작품(별이 빛나는 밤 등)과 색감이 매우 다르다. 같은 화가의 그림인데 왜 이렇게 다르게 보일까?",
+       curr22:{subject:"미술", area:"감상 — 작가의 시기별 양식 변화"}, curr15:{subject:"미술", area:"감상 — 작가와 작품의 변화"}},
+      {level:"중간", subject:"사회", q:"그림 속 가족의 식사는 감자뿐이다. 특정 시대·지역에서 감자가 주식이 된 배경에는 어떤 역사적·환경적 이유가 있을까?",
+       curr22:{subject:"통합사회1", area:"식량과 환경 — 작물과 식생활의 관계"}, curr15:{subject:"통합사회", area:"자연환경과 인간"}},
+      {level:"어려움", subject:"윤리", q:"화가는 가난한 농민의 모습을 미화하지 않고 거칠게 그렸다. '있는 그대로'를 그리는 것과 '아름답게' 그리는 것 중, 무엇이 더 진실한 예술일까?",
+       curr22:{subject:"생활과 윤리", area:"예술과 진실성 — 미화와 사실성의 윤리적 의미"}, curr15:{subject:"생활과 윤리", area:"예술과 도덕적 가치 판단"}}
+    ]
+  },
+  {
+    title:"농민의 결혼식 춤", artist:"피터 브뤼헐", year:"1566년경",
+    file:"Pieter Bruegel the Elder - The Wedding Dance.jpg",
+    desc:"농촌 마을에서 열린 결혼식 잔치에서 사람들이 춤추고 즐기는 모습을 활기차게 그린 작품입니다.",
+    levels:[
+      {level:"쉬움", subject:"음악", q:"그림 한쪽에는 악기를 연주하는 사람이 보인다. 당시 농촌 잔치에서는 어떤 악기와 음악이 사용되었을까?",
+       curr22:{subject:"음악", area:"음악과 생활 — 전통 사회의 음악과 악기"}, curr15:{subject:"음악", area:"음악사 — 생활 속의 음악"}},
+      {level:"중간", subject:"체육", q:"여러 쌍의 사람들이 짝을 지어 춤을 추고 있다. 짝을 이루어 추는 춤은 혼자 추는 춤과 비교해 어떤 신체적·사회적 효과가 있을까?",
+       curr22:{subject:"체육", area:"표현 활동 — 짝 활동과 협응력"}, curr15:{subject:"체육", area:"표현 활동의 의미"}},
+      {level:"어려움", subject:"사회", q:"결혼식, 명절 등 공동체의 잔치는 마을 사람들에게 어떤 사회적 기능을 했을까? 오늘날에는 이런 공동체 행사가 어떻게 달라졌을까?",
+       curr22:{subject:"통합사회1", area:"공동체와 문화 — 전통 의례와 공동체 결속"}, curr15:{subject:"통합사회", area:"문화와 다양성"}}
+    ]
+  },
+  {
+    title:"건초 마차", artist:"존 컨스터블", year:"1821",
+    file:"The Hay Wain.jpg",
+    desc:"영국 시골의 강을 가로지르는 마차와 구름이 떠 있는 하늘을 사실적으로 묘사한 풍경화입니다.",
+    levels:[
+      {level:"쉬움", subject:"과학", q:"하늘을 가득 채운 구름은 다양한 모양과 명암을 가지고 있다. 그림 속 구름을 관찰하고, 실제 구름의 종류와 비교해보자.",
+       curr22:{subject:"통합과학2", area:"지구 시스템 — 구름의 종류와 형성"}, curr15:{subject:"지구과학Ⅰ", area:"대기와 해양"}},
+      {level:"중간", subject:"미술", q:"화가는 구름과 하늘을 그리기 위해 실제 야외에서 여러 번 스케치를 했다고 한다. 작업실이 아닌 '현장'에서 그리는 것은 작품에 어떤 차이를 만들까?",
+       curr22:{subject:"미술", area:"표현 — 현장 관찰과 스케치"}, curr15:{subject:"미술", area:"표현 — 관찰에 기반한 표현"}},
+      {level:"어려움", subject:"사회", q:"이 그림 속 풍경은 평화로워 보이지만, 그려진 시기 영국 농촌은 산업화로 급격히 변화하고 있었다. 그림이 '보여주지 않는 것'을 통해 그 시대를 이해할 수 있을까?",
+       curr22:{subject:"통합사회1", area:"산업화와 농촌 — 풍경화 속에 드러나지 않는 사회 변화"}, curr15:{subject:"통합사회", area:"산업화와 다양성"}}
+    ]
+  },
+  {
+    title:"천문학자", artist:"요하네스 베르메르", year:"1668",
+    file:"Johannes Vermeer - The Astronomer.jpg",
+    desc:"천구의를 손으로 만지며 무언가를 살피는 학자의 모습을 그린 작품입니다.",
+    levels:[
+      {level:"쉬움", subject:"과학", q:"학자가 손을 대고 있는 둥근 물체는 '천구의'라는 별자리 모형이다. 천구의는 실제 밤하늘의 별자리를 어떻게 표현한 도구일까?",
+       curr22:{subject:"통합과학2", area:"지구와 우주 — 천구의와 별자리 모형"}, curr15:{subject:"지구과학Ⅰ", area:"우주의 구성"}},
+      {level:"중간", subject:"수학", q:"천구의는 둥근 공 표면에 별자리의 위치를 표시한 것이다. 둥근 표면 위의 위치를 좌표로 나타내려면 어떤 방법이 필요할까?",
+       curr22:{subject:"기하", area:"공간 도형 — 구면 위의 위치와 좌표"}, curr15:{subject:"기하와 벡터", area:"공간 도형과 좌표"}},
+      {level:"어려움", subject:"역사", q:"17세기 네덜란드에서는 무역과 항해를 위해 천문학과 지도 제작이 크게 발전했다. 한 나라의 산업(무역)이 학문(천문학)의 발전과 어떻게 연결될 수 있을까?",
+       curr22:{subject:"세계사", area:"교류와 변화 — 무역과 과학 기술의 상호작용"}, curr15:{subject:"세계사", area:"교류의 확대와 전통 사회의 변화"}}
+    ]
+  },
+  {
+    title:"책 읽는 소녀", artist:"장 오노레 프라고나르", year:"1770년경",
+    file:"Jean-Honoré Fragonard - A Young Girl Reading - Google Art Project.jpg",
+    desc:"노란 옷을 입고 책에 몰두해 있는 소녀의 옆모습을 부드러운 색감으로 그린 작품입니다.",
+    levels:[
+      {level:"쉬움", subject:"국어", q:"소녀는 책에 깊이 몰입한 표정을 짓고 있다. 그림만 보고, 소녀가 어떤 책을 읽고 있고 어떤 내용에 몰입했을지 상상해서 이야기를 만들어보자.",
+       curr22:{subject:"문학", area:"창작 — 그림을 활용한 이야기 상상하기"}, curr15:{subject:"국어", area:"쓰기 — 상상하여 글쓰기"}},
+      {level:"중간", subject:"미술", q:"소녀의 노란 옷은 배경과 강한 색 대비를 이루고 있다. 인물을 돋보이게 하기 위해 화가가 사용한 색의 배치 원리는 무엇일까?",
+       curr22:{subject:"미술", area:"표현 — 색의 대비와 강조"}, curr15:{subject:"미술", area:"표현 — 색채 계획"}},
+      {level:"어려움", subject:"윤리", q:"18세기에는 여성의 독서가 사회적으로 논쟁거리였다고 한다. '책을 읽는 행위'가 시대에 따라 다르게 평가받았다는 것은 무엇을 의미할까?",
+       curr22:{subject:"생활과 윤리", area:"교육과 평등 — 독서와 교육 기회의 변화"}, curr15:{subject:"생활과 윤리", area:"사회 정의와 윤리"}}
+    ]
+  },
+  {
+    title:"사과와 오렌지", artist:"폴 세잔", year:"1899년경",
+    file:"Paul Cézanne - Still Life with Apples and Oranges.jpg",
+    desc:"탁자 위에 놓인 사과, 오렌지, 그릇, 천 등을 여러 시점에서 관찰한 듯 구성한 정물화입니다.",
+    levels:[
+      {level:"쉬움", subject:"미술", q:"탁자 위의 접시와 천은 한 방향에서 본 모습이 아니라 여러 각도에서 본 것처럼 어긋나 있다. 이런 표현은 우리가 보는 방식과 어떻게 다를까?",
+       curr22:{subject:"미술", area:"표현 — 다중 시점의 표현"}, curr15:{subject:"미술", area:"표현 — 시점과 구성"}},
+      {level:"중간", subject:"수학", q:"그림 속 과일과 그릇은 원, 타원, 구 등의 도형으로 단순화할 수 있다. 입체를 평면에 그릴 때 원이 타원으로 보이는 이유는 무엇일까?",
+       curr22:{subject:"기하", area:"이차곡선 — 원의 투영과 타원"}, curr15:{subject:"기하와 벡터", area:"이차곡선의 성질"}},
+      {level:"어려움", subject:"역사", q:"세잔의 이런 다중 시점 표현은 이후 입체파(피카소 등)에 영향을 주었다고 한다. 한 화가의 새로운 시도가 이후 미술의 흐름 전체를 바꾸는 과정을 어떻게 설명할 수 있을까?",
+       curr22:{subject:"세계사", area:"현대 미술의 형성 — 새로운 표현의 계승과 영향"}, curr15:{subject:"세계사", area:"현대 세계의 변화"}}
+    ]
+  }
+];
+
+/* ---------- MD5 (for direct Wikimedia Commons CDN URLs) ---------- */
+function md5(string){
+  function rotl(n,c){ return (n<<c)|(n>>>(32-c)); }
+  function add32(a,b){
+    var lX8=(a & 0x80000000), lY8=(b & 0x80000000);
+    var lX4=(a & 0x40000000), lY4=(b & 0x40000000);
+    var lResult=(a & 0x3FFFFFFF)+(b & 0x3FFFFFFF);
+    if (lX4 & lY4) return (lResult ^ 0x80000000 ^ lX8 ^ lY8);
+    if (lX4 | lY4){
+      if (lResult & 0x40000000) return (lResult ^ 0xC0000000 ^ lX8 ^ lY8);
+      return (lResult ^ 0x40000000 ^ lX8 ^ lY8);
+    }
+    return (lResult ^ lX8 ^ lY8);
+  }
+  function FF(a,b,c,d,x,s,t){ return add32(rotl(add32(add32(a,(b&c)|(~b&d)),add32(x,t)),s),b); }
+  function GG(a,b,c,d,x,s,t){ return add32(rotl(add32(add32(a,(b&d)|(c&~d)),add32(x,t)),s),b); }
+  function HH(a,b,c,d,x,s,t){ return add32(rotl(add32(add32(a,(b^c^d)),add32(x,t)),s),b); }
+  function II(a,b,c,d,x,s,t){ return add32(rotl(add32(add32(a,(c^(b|~d))),add32(x,t)),s),b); }
+  function toWords(str){
+    var n=str.length, words=[], i;
+    for(i=0;i<n*8;i+=8) words[i>>5]|= (str.charCodeAt(i/8)&0xff)<<(i%32);
+    words[n*8>>5]|=0x80<<((n*8)%32);
+    words[(((n*8+64)>>>9)<<4)+14]=n*8;
+    return words;
+  }
+  function toHex(words){
+    var hex="0123456789abcdef", out="", i, b;
+    for(i=0;i<words.length*4;i++){
+      b=(words[i>>2]>>((i%4)*8))&0xff;
+      out+=hex.charAt((b>>4)&0xf)+hex.charAt(b&0xf);
+    }
+    return out;
+  }
+  function utf8(s){ return unescape(encodeURIComponent(s)); }
+  var x=toWords(utf8(string));
+  var a=1732584193,b=-271733879,c=-1732584194,d=271733878,olda,oldb,oldc,oldd,i;
+  for(i=0;i<x.length;i+=16){
+    olda=a; oldb=b; oldc=c; oldd=d;
+    a=FF(a,b,c,d,x[i+0],7,-680876936); d=FF(d,a,b,c,x[i+1],12,-389564586);
+    c=FF(c,d,a,b,x[i+2],17,606105819); b=FF(b,c,d,a,x[i+3],22,-1044525330);
+    a=FF(a,b,c,d,x[i+4],7,-176418897); d=FF(d,a,b,c,x[i+5],12,1200080426);
+    c=FF(c,d,a,b,x[i+6],17,-1473231341); b=FF(b,c,d,a,x[i+7],22,-45705983);
+    a=FF(a,b,c,d,x[i+8],7,1770035416); d=FF(d,a,b,c,x[i+9],12,-1958414417);
+    c=FF(c,d,a,b,x[i+10],17,-42063); b=FF(b,c,d,a,x[i+11],22,-1990404162);
+    a=FF(a,b,c,d,x[i+12],7,1804603682); d=FF(d,a,b,c,x[i+13],12,-40341101);
+    c=FF(c,d,a,b,x[i+14],17,-1502002290); b=FF(b,c,d,a,x[i+15],22,1236535329);
+    a=GG(a,b,c,d,x[i+1],5,-165796510); d=GG(d,a,b,c,x[i+6],9,-1069501632);
+    c=GG(c,d,a,b,x[i+11],14,643717713); b=GG(b,c,d,a,x[i+0],20,-373897302);
+    a=GG(a,b,c,d,x[i+5],5,-701558691); d=GG(d,a,b,c,x[i+10],9,38016083);
+    c=GG(c,d,a,b,x[i+15],14,-660478335); b=GG(b,c,d,a,x[i+4],20,-405537848);
+    a=GG(a,b,c,d,x[i+9],5,568446438); d=GG(d,a,b,c,x[i+14],9,-1019803690);
+    c=GG(c,d,a,b,x[i+3],14,-187363961); b=GG(b,c,d,a,x[i+8],20,1163531501);
+    a=GG(a,b,c,d,x[i+13],5,-1444681467); d=GG(d,a,b,c,x[i+2],9,-51403784);
+    c=GG(c,d,a,b,x[i+7],14,1735328473); b=GG(b,c,d,a,x[i+12],20,-1926607734);
+    a=HH(a,b,c,d,x[i+5],4,-378558); d=HH(d,a,b,c,x[i+8],11,-2022574463);
+    c=HH(c,d,a,b,x[i+11],16,1839030562); b=HH(b,c,d,a,x[i+14],23,-35309556);
+    a=HH(a,b,c,d,x[i+1],4,-1530992060); d=HH(d,a,b,c,x[i+4],11,1272893353);
+    c=HH(c,d,a,b,x[i+7],16,-155497632); b=HH(b,c,d,a,x[i+10],23,-1094730640);
+    a=HH(a,b,c,d,x[i+13],4,681279174); d=HH(d,a,b,c,x[i+0],11,-358537222);
+    c=HH(c,d,a,b,x[i+3],16,-722521979); b=HH(b,c,d,a,x[i+6],23,76029189);
+    a=HH(a,b,c,d,x[i+9],4,-640364487); d=HH(d,a,b,c,x[i+12],11,-421815835);
+    c=HH(c,d,a,b,x[i+15],16,530742520); b=HH(b,c,d,a,x[i+2],23,-995338651);
+    a=II(a,b,c,d,x[i+0],6,-198630844); d=II(d,a,b,c,x[i+7],10,1126891415);
+    c=II(c,d,a,b,x[i+14],15,-1416354905); b=II(b,c,d,a,x[i+5],21,-57434055);
+    a=II(a,b,c,d,x[i+12],6,1700485571); d=II(d,a,b,c,x[i+3],10,-1894986606);
+    c=II(c,d,a,b,x[i+10],15,-1051523); b=II(b,c,d,a,x[i+1],21,-2054922799);
+    a=II(a,b,c,d,x[i+8],6,1873313359); d=II(d,a,b,c,x[i+15],10,-30611744);
+    c=II(c,d,a,b,x[i+6],15,-1560198380); b=II(b,c,d,a,x[i+13],21,1309151649);
+    a=II(a,b,c,d,x[i+4],6,-145523070); d=II(d,a,b,c,x[i+11],10,-1120210379);
+    c=II(c,d,a,b,x[i+2],15,718787259); b=II(b,c,d,a,x[i+9],21,-343485551);
+    a=add32(a,olda); b=add32(b,oldb); c=add32(c,oldc); d=add32(d,oldd);
+  }
+  return toHex([a,b,c,d]);
+}
+function commonsThumb(file, width){
+  var fn = file.replace(/ /g, "_");
+  var hash = md5(fn);
+  var d1 = hash.charAt(0), d2 = hash.substring(0,2);
+  var enc = encodeURIComponent(fn);
+  return "https://upload.wikimedia.org/wikipedia/commons/thumb/" + d1 + "/" + d2 + "/" + enc + "/" + width + "px-" + enc;
+}
+function imgUrl(file, width){ return commonsThumb(file, width || 600); }
+
+/* ---------- Subject badge colors ---------- */
+function subjectColor(s){
+  if(s.indexOf("미술")>-1) return "#e0a3a3";
+  if(s.indexOf("음악")>-1) return "#e3a06e";
+  if(s.indexOf("체육")>-1) return "#b9c468";
+  if(s.indexOf("국어")>-1 || s.indexOf("문학")>-1) return "#d98f6a";
+  if(s.indexOf("수학")>-1 || s.indexOf("기하")>-1) return "#7fc4bd";
+  if(s.indexOf("과학")>-1 || s.indexOf("물리")>-1 || s.indexOf("화학")>-1 || s.indexOf("생명")>-1 || s.indexOf("지구")>-1) return "#86b0e0";
+  if(s.indexOf("역사")>-1) return "#e0b35f";
+  if(s.indexOf("사회")>-1) return "#b39ddb";
+  if(s.indexOf("윤리")>-1 || s.indexOf("철학")>-1) return "#9bbf8a";
+  return "#cdbb93";
+}
+function uniqueSubjects(art){
+  var set = [];
+  art.levels.forEach(function(lv){
+    lv.subject.split("·").forEach(function(s){
+      s = s.trim();
+      if(set.indexOf(s) === -1) set.push(s);
+    });
+  });
+  return set;
+}
+
+/* ---------- Gallery rendering ---------- */
+function renderGallery(){
+  const gallery = document.getElementById("gallery");
+  DATA.forEach((art, i) => {
+    const frame = document.createElement("article");
+    frame.className = "frame";
+    frame.style.animationDelay = (i * 0.05) + "s";
+    const badges = uniqueSubjects(art).map(function(s){
+      const c = subjectColor(s);
+      return '<span class="badge" style="color:' + c + '">' + s + '</span>';
+    }).join("");
+    frame.innerHTML = `
+      <div class="frame-inner">
+        <div class="art-wrap" data-title="${art.title}">
+          <img src="${imgUrl(art.file, 480)}" alt="${art.title}" loading="lazy">
+        </div>
+      </div>
+      <div class="plate">
+        <span class="plate-num">No. ${String(i+1).padStart(2,'0')}</span>
+        <h3>${art.title}</h3>
+        <p>${art.artist} · ${art.year}</p>
+        <div class="badges">${badges}</div>
+      </div>
+    `;
+    frame.addEventListener("click", () => openDetail(i));
+    const img = frame.querySelector("img");
+    img.addEventListener("error", () => {
+      frame.querySelector(".frame-inner").classList.add("img-fallback");
+    });
+    gallery.appendChild(frame);
+  });
+}
+
+function levelClass(level){
+  if(level === "쉬움") return "level-easy";
+  if(level === "중간") return "level-mid";
+  return "level-hard";
+}
+
+let currentArt = null;
+let currentLevel = null;
+
+function openDetail(i){
+  const art = DATA[i];
+  currentArt = art;
+  document.getElementById("detailNum").textContent = "No. " + String(i+1).padStart(2,'0');
+  document.getElementById("detailTitle").textContent = art.title;
+  document.getElementById("detailArtist").textContent = art.artist + " · " + art.year;
+  document.getElementById("detailDesc").textContent = art.desc;
+
+  const artBox = document.getElementById("detailArt");
+  const img = document.getElementById("detailImg");
+  artBox.classList.remove("img-fallback");
+  artBox.setAttribute("data-title", art.title);
+  img.src = imgUrl(art.file, 1000);
+  img.alt = art.title;
+  img.onerror = () => artBox.classList.add("img-fallback");
+
+  const docents = document.getElementById("docents");
+  docents.innerHTML = "";
+  art.levels.forEach((lv, idx) => {
+    const card = document.createElement("div");
+    card.className = "docent";
+    card.setAttribute("data-roman", ROMAN[idx]);
+    card.innerHTML = `
+      <div class="docent-head">
+        <span class="tag ${levelClass(lv.level)}">${lv.level}</span>
+        <span class="tag subject">${lv.subject}</span>
+      </div>
+      <p class="docent-q">${lv.q}</p>
+      <div class="curriculum">
+        <span class="curr-row"><span class="curr-year">2022개정 ·</span>${lv.curr22.subject} — ${lv.curr22.area}</span>
+        <span class="curr-row"><span class="curr-year">2015개정 ·</span>${lv.curr15.subject} — ${lv.curr15.area}</span>
+      </div>
+      <button class="start-btn">이 질문으로 탐구 시작</button>
+    `;
+    card.querySelector(".start-btn").addEventListener("click", () => openWorksheet(art, lv));
+    docents.appendChild(card);
+  });
+
+  document.getElementById("detailOverlay").classList.add("open");
+}
+
+function closeDetail(){
+  document.getElementById("detailOverlay").classList.remove("open");
+}
+
+/* ---------- Worksheet ---------- */
+function openWorksheet(art, lv){
+  currentArt = art;
+  currentLevel = lv;
+  document.getElementById("wsPainting").textContent = `${art.title} — ${art.artist} (${art.year})`;
+  document.getElementById("wsQuestion").textContent = `[${lv.level} · ${lv.subject}] ${lv.q}`;
+  document.getElementById("wsCurriculum").textContent =
+    `2022개정 · ${lv.curr22.subject} (${lv.curr22.area})  /  2015개정 · ${lv.curr15.subject} (${lv.curr15.area})`;
+  ["ws1","ws2","ws3","ws4","ws5"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("wsName").value = "";
+  document.getElementById("wsClass").value = "";
+  document.getElementById("worksheetOverlay").classList.add("open");
+}
+
+function closeWorksheet(){
+  document.getElementById("worksheetOverlay").classList.remove("open");
+}
+
+function openGuide(){ document.getElementById("guideOverlay").classList.add("open"); }
+function closeGuide(){ document.getElementById("guideOverlay").classList.remove("open"); }
+
+/* ---------- Save / load worksheet as a standalone HTML file ---------- */
+function escapeHtml(s){
+  return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function gatherWsData(){
+  return {
+    painting: document.getElementById("wsPainting").textContent,
+    question: document.getElementById("wsQuestion").textContent,
+    curriculum: document.getElementById("wsCurriculum").textContent,
+    name: document.getElementById("wsName").value,
+    cls: document.getElementById("wsClass").value,
+    ws1: document.getElementById("ws1").value,
+    ws2: document.getElementById("ws2").value,
+    ws3: document.getElementById("ws3").value,
+    ws4: document.getElementById("ws4").value,
+    ws5: document.getElementById("ws5").value,
+    savedAt: new Date().toISOString()
+  };
+}
+function saveWorksheetFile(){
+  const d = gatherWsData();
+  const jsonSafe = JSON.stringify(d).replace(/<\/script/gi, "<\\/script");
+  const savedAtText = new Date(d.savedAt).toLocaleString('ko-KR');
+  const html = '<!DOCTYPE html>\n<html lang="ko"><head><meta charset="UTF-8">\n'
+    + '<title>탐구 활동지 - ' + escapeHtml(d.painting) + '</title>\n'
+    + '<style>\n'
+    + 'body{font-family:"Noto Serif KR",serif;background:#f4ecdc;color:#241f1a;max-width:720px;margin:0 auto;padding:40px 24px;line-height:1.8;}\n'
+    + 'h1{font-size:22px;border-bottom:2px solid #241f1a;padding-bottom:12px;}\n'
+    + '.meta{font-size:13px;color:#6b5f53;margin-bottom:18px;}\n'
+    + '.field{margin-bottom:18px;}\n'
+    + '.field label{display:block;font-size:13px;color:#6b5f53;margin-bottom:4px;}\n'
+    + '.field .val{white-space:pre-wrap;border-bottom:1px solid rgba(36,31,26,.2);padding-bottom:6px;min-height:1.4em;}\n'
+    + '.notice{margin-top:30px;padding:14px;background:rgba(217,139,86,0.12);border-left:3px solid #b9764a;font-size:13px;}\n'
+    + '</style></head><body>\n'
+    + '<h1>나의 명화 탐구 기록</h1>\n'
+    + '<div class="meta">이름: ' + escapeHtml(d.name) + ' · 학번/모둠: ' + escapeHtml(d.cls) + ' · 저장일: ' + savedAtText + '</div>\n'
+    + '<div class="field"><label>탐구 작품</label><div class="val">' + escapeHtml(d.painting) + '</div></div>\n'
+    + '<div class="field"><label>탐구 질문</label><div class="val">' + escapeHtml(d.question) + '</div></div>\n'
+    + '<div class="field"><label>교육과정 연계</label><div class="val">' + escapeHtml(d.curriculum) + '</div></div>\n'
+    + '<div class="field"><label>1. 나의 첫 생각 (가설)</label><div class="val">' + escapeHtml(d.ws1) + '</div></div>\n'
+    + '<div class="field"><label>2. 탐구 방법</label><div class="val">' + escapeHtml(d.ws2) + '</div></div>\n'
+    + '<div class="field"><label>3. 조사하고 알아낸 내용</label><div class="val">' + escapeHtml(d.ws3) + '</div></div>\n'
+    + '<div class="field"><label>4. 결론 — 새롭게 알게 된 점</label><div class="val">' + escapeHtml(d.ws4) + '</div></div>\n'
+    + '<div class="field"><label>5. 더 궁금해진 점</label><div class="val">' + escapeHtml(d.ws5) + '</div></div>\n'
+    + '<div class="notice">이 파일을 "모두의 명화로 떠나는 탐구" 첫 화면의 "이어서 쓰기" 버튼으로 불러오면 이 내용을 계속 이어서 작성할 수 있습니다.</div>\n'
+    + '<script type="application/json" id="ws-data">' + jsonSafe + '<\/script>\n'
+    + '</body></html>';
+
+  const blob = new Blob([html], {type:"text/html"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  const safeName = (d.name || "학생").replace(/[^가-힣A-Za-z0-9]/g, "");
+  const shortTitle = (d.painting || "탐구").split(" ")[0].replace(/[^가-힣A-Za-z0-9]/g, "");
+  a.download = "탐구활동_" + safeName + "_" + shortTitle + ".html";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+}
+function triggerLoad(){ document.getElementById("loadInput").click(); }
+document.getElementById("loadInput").addEventListener("change", function(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    const text = ev.target.result;
+    const m = text.match(/<script type="application\/json" id="ws-data">([\s\S]*?)<\/script>/);
+    if(!m){
+      alert("이 파일에서 탐구 활동지 데이터를 찾을 수 없습니다. '저장하기'로 받은 파일을 선택해주세요.");
+      return;
+    }
+    let d;
+    try{ d = JSON.parse(m[1]); }
+    catch(err){ alert("파일을 읽는 중 문제가 발생했습니다."); return; }
+
+    document.getElementById("wsPainting").textContent = d.painting || "";
+    document.getElementById("wsQuestion").textContent = d.question || "";
+    document.getElementById("wsCurriculum").textContent = d.curriculum || "";
+    document.getElementById("wsName").value = d.name || "";
+    document.getElementById("wsClass").value = d.cls || "";
+    document.getElementById("ws1").value = d.ws1 || "";
+    document.getElementById("ws2").value = d.ws2 || "";
+    document.getElementById("ws3").value = d.ws3 || "";
+    document.getElementById("ws4").value = d.ws4 || "";
+    document.getElementById("ws5").value = d.ws5 || "";
+    document.getElementById("worksheetOverlay").classList.add("open");
+  };
+  reader.readAsText(file);
+  e.target.value = "";
+});
+
+/* ---------- Presentation mode ---------- */
+let presentSlides = [];
+let presentIndex = 0;
+
+function buildPresentSlides(){
+  const d = gatherWsData();
+  const art = currentArt || {};
+  const lv = currentLevel || {};
+  const slides = [];
+  slides.push({
+    kicker: (art.title || "") + " · " + (art.artist || ""),
+    title: "[" + (lv.level || "") + " · " + (lv.subject || "") + "]",
+    body: lv.q || d.question,
+    bg: art.file ? imgUrl(art.file, 1200) : null
+  });
+  slides.push({ kicker:"나의 첫 생각 (가설)", title:"", body: d.ws1 || "(작성된 내용이 없습니다)", bg: slides[0].bg });
+  slides.push({ kicker:"탐구 방법", title:"", body: d.ws2 || "(작성된 내용이 없습니다)", bg: slides[0].bg });
+  slides.push({ kicker:"조사하고 알아낸 내용", title:"", body: d.ws3 || "(작성된 내용이 없습니다)", bg: slides[0].bg });
+  let concl = d.ws4 || "(작성된 내용이 없습니다)";
+  if(d.ws5){ concl += "\n\n→ 더 궁금해진 점: " + d.ws5; }
+  slides.push({ kicker:"결론 및 더 궁금한 점", title:"", body: concl, bg: slides[0].bg });
+  const who = [d.name, d.cls].filter(Boolean).join(" · ");
+  slides.push({ kicker: who || "발표를 마칩니다", title: art.title || "", body: "고맙습니다.", bg: slides[0].bg });
+  return slides;
+}
+
+function renderPresentSlide(){
+  const s = presentSlides[presentIndex];
+  document.getElementById("presentKicker").textContent = s.kicker || "";
+  document.getElementById("presentTitle").textContent = s.title || "";
+  document.getElementById("presentBody").textContent = s.body || "";
+  const bg = document.getElementById("presentBg");
+  bg.style.backgroundImage = s.bg ? "url('" + s.bg + "')" : "none";
+
+  const slideEl = document.getElementById("presentSlide");
+  slideEl.style.animation = "none";
+  requestAnimationFrame(() => { slideEl.style.animation = ""; });
+
+  const dots = document.getElementById("presentDots");
+  dots.innerHTML = "";
+  presentSlides.forEach((_, i) => {
+    const dot = document.createElement("div");
+    dot.className = "present-dot" + (i === presentIndex ? " active" : "");
+    dots.appendChild(dot);
+  });
+}
+
+function openPresent(){
+  presentSlides = buildPresentSlides();
+  presentIndex = 0;
+  renderPresentSlide();
+  document.getElementById("presentOverlay").classList.add("open");
+}
+function closePresent(){
+  document.getElementById("presentOverlay").classList.remove("open");
+}
+function presentNext(){
+  presentIndex = (presentIndex + 1) % presentSlides.length;
+  renderPresentSlide();
+}
+function presentPrev(){
+  presentIndex = (presentIndex - 1 + presentSlides.length) % presentSlides.length;
+  renderPresentSlide();
+}
+document.addEventListener("keydown", (e) => {
+  if(!document.getElementById("presentOverlay").classList.contains("open")) return;
+  if(e.key === "ArrowRight") presentNext();
+  if(e.key === "ArrowLeft") presentPrev();
+  if(e.key === "Escape") closePresent();
+});
+
+/* ---------- Spotlight follows pointer (desktop) ---------- */
+const spotlightEl = document.getElementById("spotlight");
+document.addEventListener("mousemove", (e) => {
+  spotlightEl.style.animation = "none";
+  spotlightEl.style.transform = "translate(" + (e.clientX - window.innerWidth*0.3) + "px, " + (e.clientY - window.innerHeight*0.3) + "px)";
+});
+
+/* ---------- Overlay close handlers ---------- */
+document.getElementById("detailOverlay").addEventListener("click", (e) => {
+  if(e.target.id === "detailOverlay") closeDetail();
+});
+document.getElementById("worksheetOverlay").addEventListener("click", (e) => {
+  if(e.target.id === "worksheetOverlay") closeWorksheet();
+});
+document.getElementById("guideOverlay").addEventListener("click", (e) => {
+  if(e.target.id === "guideOverlay") closeGuide();
+});
+
+renderGallery();
+</script>
+</body>
+</html>
